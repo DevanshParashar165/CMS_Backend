@@ -254,8 +254,6 @@ Each role has access only to authorized resources.
 
 ---
 
----
-
 ## Author
 
 Developed by **Devansh Parashar**.
