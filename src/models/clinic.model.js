@@ -52,7 +52,7 @@ const clinicSchema = new mongoose.Schema({
         maxlength: 10,
         trim: true
     },
-    owner_name : {
+    owner : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "User",
         required : true
