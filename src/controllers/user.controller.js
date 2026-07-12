@@ -89,11 +89,8 @@ export const registerUser = async (req, res) => {
       last_login: new Date(),
     });
 
-    const { accessToken, refreshToken } = await generateTokensForUser(newUser);
     return res
       .status(201)
-      .cookie('accessToken', accessToken, cookieOptions)
-      .cookie('refreshToken', refreshToken, cookieOptions)
       .json({ message: 'User registered successfully', user: sanitizeUser(newUser) });
   } catch (error) {
     return res.status(500).json({ message: 'Error registering user', error: error.message });
