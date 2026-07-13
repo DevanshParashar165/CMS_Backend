@@ -3,25 +3,35 @@ import { User } from '../models/user.model.js';
 
 export const authenticate = async (req, res, next) => {
   try {
+    console.log("Cookies:", req.cookies);
+    console.log("Access Token:", req.cookies?.accessToken);
+    console.log("Authorization:", req.header("Authorization"));
+
     const token =
       req.cookies?.accessToken ||
-      req.header('Authorization')?.replace('Bearer ', '');
+      req.header("Authorization")?.replace("Bearer ", "");
+
+    console.log("Token:", token);
 
     if (!token) {
-      return res.status(401).json({ message: 'Authentication required' });
+      return res.status(401).json({ message: "Authentication required" });
     }
 
     const payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    console.log("Payload:", payload);
+
     const user = await User.findById(payload._id);
+    console.log("User:", user);
 
     if (!user || !user.is_active) {
-      return res.status(401).json({ message: 'Invalid or expired token' });
+      return res.status(401).json({ message: "Invalid or expired token" });
     }
 
     req.user = user;
     next();
   } catch (error) {
-    return res.status(401).json({ message: 'Invalid or expired token' });
+    console.log(error);
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
 

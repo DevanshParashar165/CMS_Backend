@@ -5,6 +5,11 @@ const doctorSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
     },
+    clinic_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Clinic",
+        required: true,
+    },
     qualification : {
         type: String,
         required: true,

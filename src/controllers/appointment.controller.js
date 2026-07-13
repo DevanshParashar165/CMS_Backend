@@ -179,3 +179,18 @@ export const approveAppointment = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+export const confirmAppointment = async (req, res) => {
+  try {
+    return await changeAppointmentStatus(
+      req.params.id,
+      "confirmed",
+      res
+    );
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
