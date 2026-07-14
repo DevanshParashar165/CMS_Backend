@@ -10,6 +10,7 @@ import patientRouter from "./src/routes/patient.route.js";
 import appointmentRouter from "./src/routes/appointment.route.js";
 import clinicRouter from "./src/routes/clinic.route.js";
 import doctorRouter from "./src/routes/doctor.route.js";
+import billingRouter from "./src/routes/billing.route.js";
 
 dotenv.config();
 const app = express();
@@ -36,7 +37,8 @@ app.use("/api/users", userRouter);
 app.use("/api/patients", patientRouter);
 app.use("/api/appointments", appointmentRouter);
 app.use("/api/clinics", clinicRouter);
-app.use("/api/doctor",doctorRouter)
+app.use("/api/doctors",doctorRouter)
+app.use('/api/billings/',billingRouter)
 
 
 app.use((err, req, res, next) => {

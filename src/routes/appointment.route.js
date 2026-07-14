@@ -7,6 +7,7 @@ import {
   cancelAppointment,
   approveAppointment,
   deleteAppointment,
+  getAppointmentByClinicId,
 } from '../controllers/appointment.controller.js';
 import { authenticate } from '../middlewares/auth.middleware.js';
 
@@ -15,6 +16,7 @@ appointmentRouter.use(authenticate);
 
 appointmentRouter.post('/', createAppointment);
 appointmentRouter.get('/', getAppointments);
+appointmentRouter.get('/clinic/:id', getAppointmentByClinicId);
 appointmentRouter.get('/:id', getAppointmentById);
 appointmentRouter.put('/:id', updateAppointment);
 appointmentRouter.delete('/:id', deleteAppointment);

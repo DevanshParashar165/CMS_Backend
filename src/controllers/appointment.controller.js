@@ -95,6 +95,29 @@ export const getAppointments = async (req, res) => {
   }
 };
 
+export const getAppointmentByClinicId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id || !isValidObjectId(id)) {
+      return res.status(400).json({ success: false, message: 'Valid clinic ID is required' });
+    }
+
+    const appointments = await Appointment.find({ clinic_id: id })
+      .populate('clinic_id')
+      .populate('doctor_id')
+      .populate('patient_id')
+      .sort({ appointment_date: 1, appointment_time: 1 });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Clinic appointments fetched successfully',
+      data: appointments,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 export const updateAppointment = async (req, res) => {
   try {
     const { id } = req.params;
