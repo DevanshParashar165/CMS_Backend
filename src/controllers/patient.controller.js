@@ -50,14 +50,9 @@ export const createPatient = async (req, res) => {
       !clinic_id ||
       !first_name ||
       !last_name ||
-      !email ||
       !contact_number ||
       !country_code ||
-      !date_of_birth ||
       !gender ||
-      !address1 ||
-      !city ||
-      !state ||
       !country
     ) {
       return res.status(400).json({ success: false, message: 'Missing required patient fields' });
@@ -228,7 +223,9 @@ export const getPatientsByClinic = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid clinic ID' });
     }
 
-    const patients = await Patient.find({ clinic_id: clinicId }).sort({ createdAt: -1 });
+    const patients = await Patient.find({ clinic_id: clinicId })
+      .populate('clinic_id', 'name')
+      .sort({ createdAt: -1 });
     return res.status(200).json({ success: true, data: patients });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });

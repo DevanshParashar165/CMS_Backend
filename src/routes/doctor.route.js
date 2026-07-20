@@ -8,6 +8,7 @@ import {
     updateDoctor,
     deleteDoctor,
     searchDoctors,
+    getTotalSpecialtiesByClinic,
 } from "../controllers/doctor.controller.js";
 import { authenticate, authorizeRoles } from "../middlewares/auth.middleware.js";
 
@@ -64,5 +65,7 @@ doctorRouter.delete(
     authorizeRoles("admin", "super_admin"),
     deleteDoctor
 );
+
+doctorRouter.get("/specialities/:clinic_id", authenticate, getTotalSpecialtiesByClinic)
 
 export default doctorRouter;

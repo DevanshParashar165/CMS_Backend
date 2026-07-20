@@ -29,6 +29,9 @@ const doctorSchema = new mongoose.Schema({
     consultation_fee : {
         type: Number,
         required: true,
+    },
+    specialization : {
+        type : String,
     }
 },{timestamps: true});
 

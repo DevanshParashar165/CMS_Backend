@@ -4,19 +4,33 @@ import { Clinic } from "../models/clinic.model.js";
 import { DoctorSchedule } from "../models/doctorSchedule.model.js";
 
 export const createDoctor = async (req, res) => {
-    const { first_name, last_name, email, password, username, contact_number, country_code, gender, clinic_id, experience, state_registration_number, national_registration_number, consultation_fee, qualification } = req.body;
-    if (!first_name || !last_name || !email || !password || !username || !contact_number || !country_code || !gender || !clinic_id || !experience || !state_registration_number || !national_registration_number || !consultation_fee || !qualification) {
-        return res.status(400).json({ message: "All fields are required" })
+    try {
+        const { first_name, last_name, email, password, username, contact_number, country_code, gender, clinic_id, experience, state_registration_number, national_registration_number, consultation_fee, qualification, specialization } = req.body;
+        if (!first_name || !last_name || !email || !password || !username || !contact_number || !country_code || !gender || !clinic_id || !experience || !state_registration_number || !national_registration_number || !consultation_fee || !qualification || !specialization) {
+            return res.status(400).json({ message: "All fields are required" })
+        }
+
+        const clinic = await Clinic.findById(clinic_id);
+        if (!clinic) {
+            return res.status(404).json({ message: "Clinic not found" })
+        }
+
+        const user = await User.create({
+            first_name, last_name, email, password, username, contact_number, country_code, gender,
+            clinic_id, role: "doctor", last_login: new Date(), is_active: true
+        })
+        if (!user) {
+            return res.status(400).json({ message: "User not created" })
+        }
+        const doctor = await Doctor.create({ user_id: user._id, clinic_id, experience, state_registration_number, national_registration_number, consultation_fee, qualification, specialization })
+        if (!doctor) {
+            return res.status(400).json({ message: "Doctor not created" })
+        }
+        return res.status(201).json({ message: "Doctor created successfully", doctor })
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+        console.error(error);
     }
-    const user = await User.create({ first_name, last_name, email, password, username, contact_number, country_code, gender, role: "doctor", last_login: new Date(), is_active: true })
-    if (!user) {
-        return res.status(400).json({ message: "User not created" })
-    }
-    const doctor = await Doctor.create({ user_id: user._id, clinic_id, experience, state_registration_number, national_registration_number, consultation_fee, qualification })
-    if (!doctor) {
-        return res.status(400).json({ message: "Doctor not created" })
-    }
-    return res.status(201).json({ message: "Doctor created successfully", doctor })
 }
 
 export const updateRoleToDoctor = async (req, res) => {
@@ -108,10 +122,12 @@ export const getDoctorsByClinicId = async (req, res) => {
         if (!clinic_id) {
             return res.status(400).json({ message: "Clinic ID is required" })
         }
+        console.log(clinic_id)
         const doctors = await Doctor.find({ clinic_id }).populate("user_id").populate("clinic_id");
         if (!doctors) {
             return res.status(404).json({ message: "Doctors not found" })
         }
+        console.log(doctors);
         return res.status(200).json({ message: "Doctors fetched successfully", doctors })
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -190,3 +206,23 @@ export const searchDoctors = async (req, res) => {
     }
 }
 
+export const getTotalSpecialtiesByClinic = async (req, res) => {
+    try {
+        const { clinic_id } = req.params;
+
+        const specialties = await Doctor.distinct("specialization", {
+            clinic_id,
+        });
+
+        return res.status(200).json({
+            message: "Specialties fetched successfully",
+            totalSpecialties: specialties.length,
+            specialties,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: error.message,
+        });
+    }
+};
